@@ -132,6 +132,7 @@ touching the endpoints (see [Known limitations](#known-limitations)).
 
 | Method | Path            | Description                                          |
 | ------ | --------------- | ---------------------------------------------------- |
+| GET    | `/`             | HTML landing page with links (confirms service is up). |
 | POST   | `/jobs`         | Submit a job. Returns `{id, status}` with `202`. `503` if the queue is full. |
 | GET    | `/job/{job_id}` | Get one job's status and details. `404` if missing.  |
 | GET    | `/getJobs`      | List all jobs and their info.                        |
@@ -204,6 +205,7 @@ fast with a clear error.
 
 | Variable                    | Default | Meaning                                       |
 | --------------------------- | ------- | --------------------------------------------- |
+| `JOB_LOG_LEVEL`             | `INFO`  | Log level for the app's loggers (`DEBUG`/`INFO`/`WARNING`/...) |
 | `JOB_MAX_WORKERS`           | `4`     | Concurrent workers / max in-flight jobs       |
 | `JOB_QUEUE_SIZE`            | `1000`  | Max queued jobs before backpressure (`503`)   |
 | `JOB_REQUEST_TIMEOUT_SECONDS` | `30.0` | Per-attempt timeout for the outbound httpx call |

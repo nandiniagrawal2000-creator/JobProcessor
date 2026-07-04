@@ -23,6 +23,15 @@ from tests.helpers import (
 )
 
 
+def test_root_landing_page(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "text/html" in response.headers["content-type"]
+    body = response.text
+    assert "/docs" in body
+    assert "/health" in body
+
+
 def test_health_ok(client):
     response = client.get("/health")
     assert response.status_code == 200

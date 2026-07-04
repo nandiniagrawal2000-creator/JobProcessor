@@ -24,6 +24,10 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    # --- Logging -------------------------------------------------------------
+    # Log level for the app's own loggers. Env: JOB_LOG_LEVEL
+    log_level: str = Field(default="INFO")
+
     # --- Queue / worker pool -------------------------------------------------
     # Concurrent worker coroutines pulling from the queue -- the hard cap on how
     # many jobs (and outbound HTTP calls) run at once.  Env: JOB_MAX_WORKERS
