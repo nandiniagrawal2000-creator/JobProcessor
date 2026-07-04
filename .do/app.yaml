@@ -1,0 +1,22 @@
+# DigitalOcean App Platform spec.
+# After pushing to GitHub, either:
+#   - create the app in the DO dashboard and point it at this repo, or
+#   - use: doctl apps create --spec .do/app.yaml
+# Replace REPLACE_WITH/your-repo below with your actual GitHub owner/repo.
+name: jobprocessor
+region: nyc
+services:
+  - name: api
+    dockerfile_path: Dockerfile
+    source_dir: /
+    github:
+      repo: REPLACE_WITH/your-repo
+      branch: main
+      deploy_on_push: true
+    http_port: 8080
+    # Keep at 1: the job queue and store are in-memory and per-process,
+    # so they are not shared across multiple instances (see README Phase 2).
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    health_check:
+      http_path: /health
