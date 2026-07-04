@@ -20,6 +20,7 @@ class JobStatus(str, Enum):
 
     QUEUED = "Queued"
     RUNNING = "Running"
+    RETRYING = "Retrying"
     COMPLETED = "Completed"
     FAILED = "Failed"
 
@@ -45,6 +46,9 @@ class Job(BaseModel):
     status: JobStatus = JobStatus.QUEUED
     created_at: datetime = Field(default_factory=_utcnow)
     updated_at: datetime = Field(default_factory=_utcnow)
+
+    # Number of processing attempts made so far (includes retries).
+    attempts: int = 0
 
     # Populated once the background task finishes. These mirror whatever the
     # external API returned so the client sees the full response content.
