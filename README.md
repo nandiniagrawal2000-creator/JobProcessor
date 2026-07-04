@@ -196,6 +196,20 @@ curl http://127.0.0.1:8000/health
 # -> {"status": "ok", "queue_depth": 0}
 ```
 
+### Logs
+
+The app logs to stdout, so you can watch activity in the terminal while it runs.
+Three loggers cover the flow — `jobprocessor.api` (requests: submissions, reads,
+queue-full rejections), `jobprocessor.queue` (pool start/stop), and
+`jobprocessor.jobs` (per-attempt worker activity: running, retrying, completed,
+failed). Set `JOB_LOG_LEVEL=DEBUG` for more detail. Example:
+
+```
+10:35:39 | INFO    | jobprocessor.api  | Job 5e8b... accepted and queued (queue_depth=1)
+10:35:39 | INFO    | jobprocessor.jobs | Job 5e8b... attempt 1 -> http://…/health
+10:35:41 | INFO    | jobprocessor.jobs | Job 5e8b... completed (200) on attempt 1
+```
+
 ## Configuration
 
 Configuration is managed by **pydantic-settings** (`app/config.py`). Values are
@@ -242,17 +256,15 @@ require no network. CI (GitHub Actions) runs `pytest` on every push and PR.
 
 ```
 app/
-  main.py     # FastAPI app + endpoints (validation & error handling), lifespan
-  models.py   # JobStatus enum, JobRequest, Job, response models
-  jobs.py     # process_job worker (httpx + raise_for_status)
+  main.py     # FastAPI app: endpoints, landing page, lifespan, logging setup
+  models.py   # JobStatus enum, JobRequest, Job (attempts, result, ...), responses
+  jobs.py     # process_job worker: simulated work, httpx call, retries + backoff
   store.py    # concurrency-safe in-memory job store (snapshot reads, atomic writes)
   queue.py    # JobQueue interface + in-process AsyncioJobQueue (worker pool)
-  config.py   # pydantic-settings config (workers, queue, timeout, retries)
+  config.py   # pydantic-settings config (logging, workers, queue, timeout, retries, work)
 tests/
   test_worker.py   # unit tests for process_job + retry/backoff (mocked httpx)
-  test_queue.py    # unit tests for the queue (backpressure, concurrency cap, drain)
-  test_api.py      # integration tests for the endpoints (TestClient)
-  test_config.py   # unit tests for env-driven Settings
+  test_api.py      # integration tests for the endpoints (TestClient, live queue)
   helpers.py       # httpx AsyncMock/MagicMock helpers + polling helper
 .env.example       # sample environment configuration
 scripts/

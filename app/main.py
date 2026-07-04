@@ -37,6 +37,7 @@ app = FastAPI(
     description="Accept jobs and process them asynchronously in the background.",
     version="1.0.0",
     lifespan=lifespan,
+    redoc_url=None,
 )
 
 
@@ -66,7 +67,6 @@ async def index() -> str:
   <p>An async job processing API. Explore it here:</p>
   <ul>
     <li><a href="/docs">/docs</a> &mdash; interactive Swagger API docs</li>
-    <li><a href="/redoc">/redoc</a> &mdash; alternative ReDoc API docs</li>
     <li><a href="/health">/health</a> &mdash; liveness probe + queue depth</li>
     <li><a href="/getJobs">/getJobs</a> &mdash; list all jobs</li>
   </ul>
